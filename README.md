@@ -1,33 +1,43 @@
-# 🍕 Pizzería Mamma Mía - Hito 7
+# 🍕 Pizzería Mamma Mía - Hito 8 (Final)
 
-Este hito se enfoca en el dominio avanzado de **React Router II**, incorporando enrutamiento dinámico para el detalle de productos y protección de rutas mediante la simulación de autenticación global con **Context API**.
+Este hito finaliza el desarrollo de la aplicación web implementando **autenticación real mediante JSON Web Tokens (JWT)** contra el backend, conectando el inicio de sesión, registro, obtención del perfil de usuario y envío de órdenes de compra.
 
 ## 🚀 Cambios e Implementaciones
 
-### 1. Enrutamiento Dinámico (`useParams`)
-- **`App.jsx`**: Se actualizó la ruta fija del producto a la ruta dinámica `/pizza/:id`.
-- **`CardPizza.jsx`**: Se integró el componente `<Link>` en el botón *"Ver Más 👀"* para redirigir dinámicamente hacia `/pizza/${id}`.
-- **`Pizza.jsx`**: Se implementó el hook `useParams()` para capturar el identificador de la URL y realizar peticiones dinámicas al endpoint `http://localhost:5000/api/pizzas/${id}`.
+### 1. Autenticación Real con JWT (`UserContext.jsx`)
+- Se reemplazó el estado simulado por la gestión real del `token` JWT y el `email` del usuario autenticado.
+- **`login(email, password)`**: Consume `POST /api/auth/login`, almacena el token y el correo en el estado global.
+- **`register(email, password)`**: Consume `POST /api/auth/register` para registrar nuevos usuarios e iniciar sesión automáticamente.
+- **`logout()`**: Limpia los estados de `token` y `email` (`null`), cerrando la sesión en toda la aplicación.
+- **`getProfile()`**: Consume `GET /api/auth/me` enviando el token en el header `Authorization: Bearer <token>` para validar y obtener los datos del usuario.
 
-### 2. Contexto de Autenticación (`UserContext.jsx`)
-- Se creó `src/context/UserContext.jsx` para gestionar de forma global el estado de sesión del usuario.
-- Estado `token` inicializado en `true` por defecto y creación del método `logout()` para cambiar el estado a `false`.
-- Envoltura global de la aplicación con `<UserProvider>` en el archivo `main.jsx`.
+### 2. Formularios y Perfil Conectados
+- **`LoginPage.jsx` y `RegisterPage.jsx`**: Conectados directamente a los métodos globales de `UserContext` para autenticar usuarios contra el servidor.
+- **`Profile.jsx`**: Ejecuta `getProfile()` al montarse, despliega dinámicamente el correo del usuario autenticado y permite cerrar sesión mediante su botón dedicado.
+- **`Navbar.jsx`**: Enlaza su botón *Logout* con la función global de cierre de sesión.
 
-### 3. Protección de Rutas y Control de UI
-- **`Navbar.jsx`**: Consumo de `token` y `logout`. Muestra los botones *Profile* y *Logout* cuando hay sesión activa, o *Login* y *Register* al cerrarla. Al hacer clic en *Logout*, se ejecuta el cierre de sesión global.
-- **`Cart.jsx`**: Consumo de `token` para deshabilitar automáticamente el botón de *"Pagar 💳"* (`disabled={!token}`) si el usuario no está autenticado.
-- **`App.jsx`**: Implementación del componente `<Navigate />` para proteger los accesos:
-  - Si `token` es `false`, el acceso a `/profile` redirige automáticamente a `/login`.
-  - Si `token` es `true`, los accesos a `/login` y `/register` redirigen hacia el inicio (`/`).
+### 3. Proceso de Pago / Checkout (`Cart.jsx`)
+- Implementación de `handleCheckout()`, que envía el contenido del carrito al endpoint `POST /api/checkouts` adjuntando el token JWT en las cabeceras (`Authorization`).
+- Despliegue de una alerta visual de confirmación en pantalla tras completarse exitosamente la transacción.
 
 ---
 
-## 💻 Ejecución del Proyecto
+## 💻 Ejecución del Proyecto Completo
 
-1. Asegúrate de tener el servidor backend corriendo en el puerto `5000`.
-2. En la carpeta del frontend, inicia el entorno de desarrollo:
+1. **Levantar el Backend:**
+   En la carpeta del servidor, inicia la API en el puerto `5000`:
    ```bash
    npm run dev
    ```
-3. Prueba hacer clic en *"Ver Más 👀"* en cualquier tarjeta para ver su detalle único y utiliza el botón *"Logout"* para comprobar la protección de rutas en tiempo real.
+
+2. **Iniciar el Frontend:**
+   En la raíz de este proyecto, ejecuta:
+   ```bash
+   npm install
+   npm run dev
+   ```
+
+3. **Credenciales de prueba:**
+   Puedes registrar un usuario nuevo en `/register` o iniciar sesión en `/login` con:
+   - **Email:** `test@example.com`
+   - **Contraseña:** `123123`

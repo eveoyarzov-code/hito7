@@ -1,12 +1,21 @@
+import { useContext, useEffect } from "react";
+import { UserContext } from "../context/UserContext";
+
 const Profile = () => {
+  const { email, logout, getProfile } = useContext(UserContext);
+
+  useEffect(() => {
+    getProfile();
+  }, []);
+
   return (
     <div className="container my-5 text-center" style={{ minHeight: "60vh" }}>
-      <div className="card mx-auto p-4 shadow" style={{ maxWidth: "400px" }}>
-        <h2 className="mb-4">👤 Perfil de Usuario</h2>
+      <div className="card mx-auto p-4 shadow" style={{ maxWidth: "420px" }}>
+        <h2 className="mb-4 fw-bold">👤 Perfil de Usuario</h2>
         <p className="fs-5 text-muted mb-4">
-          <strong>Email:</strong> usuario@mammamia.com
+          <strong>Email:</strong> {email || "Cargando..."}
         </p>
-        <button className="btn btn-danger w-100">
+        <button onClick={logout} className="btn btn-danger w-100">
           Cerrar Sesión 🚪
         </button>
       </div>
